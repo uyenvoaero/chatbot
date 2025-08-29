@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minimal Chatbot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="A modern, minimal web chatbot UI.">
+</head>
+<body>
+  <main class="chatbot">
+    <header class="chatbot__header" role="banner">
+      <div class="chatbot__brand">
+        <span class="chatbot__dot" aria-hidden="true"></span>
+        <h1 class="chatbot__title">Chatbot</h1>
+      </div>
+    </header>
+
+    <section class="chatbot__messages" id="messages" role="log" aria-live="polite" aria-relevant="additions"></section>
+
+    <form class="chatbot__input" id="chat-form" autocomplete="off">
+      <label class="sr-only" for="message-input">Your message</label>
+      <input id="message-input" name="message" type="text" placeholder="Type a message..." required>
+      <button type="submit" title="Send" aria-label="Send message">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" fill="currentColor"/>
+        </svg>
+      </button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
