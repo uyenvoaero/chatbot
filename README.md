@@ -1,6 +1,5 @@
 # AI Website Chatbot
 
-<<<<<<< HEAD
 A modern AI-powered chatbot with OpenAI integration, featuring a beautiful UI and conversation memory.
 =======
 A modern AI chatbot with OpenAI integration, built with Node.js backend and vanilla JavaScript frontend.
@@ -237,4 +236,3 @@ The chatbot uses GPT-3.5-turbo with the following settings:
 ## License
 
 MIT License - feel free to use this project for your own purposes!
->>>>>>> 595295f079d4c97283ee2e9dd718455c57ef556c
