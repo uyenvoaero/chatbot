@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Dashboard - AI Assistant</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1><i class="fas fa-comments"></i> Chat Dashboard</h1>
+                <nav class="header-nav">
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-arrow-left"></i> Back to Chat
+                    </a>
+                    <button id="refreshBtn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Conversations List -->
+            <section class="conversations-section">
+                <div class="section-header">
+                    <h2>Recent Conversations</h2>
+                    <div class="conversation-stats">
+                        <span id="conversationCount">0 conversations</span>
+                    </div>
+                </div>
+                
+                <div class="conversations-list" id="conversationsList">
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading conversations...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conversation Detail -->
+            <section class="conversation-detail" id="conversationDetail" style="display: none;">
+                <div class="detail-header">
+                    <button id="backToList" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to List
+                    </button>
+                    <h3 id="conversationTitle">Conversation Details</h3>
+                    <div class="conversation-meta">
+                        <span id="conversationDate"></span>
+                        <span id="messageCount"></span>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will be loaded here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-comments"></i>
+            <h3>No Conversations Yet</h3>
+            <p>Start chatting to see your conversation history here.</p>
+            <a href="/" class="cta-button">Start New Chat</a>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
