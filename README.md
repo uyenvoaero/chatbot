@@ -4,7 +4,6 @@
 ## Features
 
 - 🤖 **OpenAI Integration**: Powered by GPT-3.5-turbo for intelligent responses
-<<<<<<< HEAD
 - 💬 **Conversation Memory**: Maintains context throughout the conversation
 - 🎨 **Modern UI**: Beautiful, responsive chat interface
 - 🔄 **Real-time Communication**: Seamless frontend-backend communication
@@ -230,5 +229,4 @@ The chatbot uses GPT-3.5-turbo with the following settings:
 - Ensure all dependencies are installed correctly
 
 ## License
-
 MIT License - feel free to use this project for your own purposes!
