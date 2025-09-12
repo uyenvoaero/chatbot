@@ -1,6 +1,8 @@
 class ConversationDashboard {
     constructor() {
         this.apiBaseUrl = '/api';
+        console.log('=== DASHBOARD INIT ===');
+        console.log('API Base URL:', this.apiBaseUrl);
         this.conversationsList = document.getElementById('conversationsList');
         this.conversationDetail = document.getElementById('conversationDetail');
         this.analysisSection = document.getElementById('analysisSection');
