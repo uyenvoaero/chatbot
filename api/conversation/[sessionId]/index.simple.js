@@ -7,8 +7,11 @@ module.exports = async (req, res) => {
     console.log('Query:', req.query);
     console.log('Headers:', req.headers);
     
-    const { sessionId } = req.query;
+    // Extract sessionId from URL path instead of query
+    const urlParts = req.url.split('/');
+    const sessionId = urlParts[urlParts.length - 1];
     
+    console.log('URL parts:', urlParts);
     console.log('Extracted SessionId:', sessionId);
     
     if (req.method === 'GET') {

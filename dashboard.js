@@ -418,7 +418,7 @@ class ConversationDashboard {
             console.log('API URL:', `${this.apiBaseUrl}/conversation/${conversation.id}`);
             console.log('API Base URL:', this.apiBaseUrl);
             
-            const deleteUrl = `${this.apiBaseUrl}/conversation/${conversation.id}`;
+            const deleteUrl = `${this.apiBaseUrl}/delete-conversation?sessionId=${conversation.id}`;
             console.log('Final delete URL:', deleteUrl);
             
             const response = await fetch(deleteUrl, {
