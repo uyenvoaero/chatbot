@@ -287,7 +287,6 @@ Format the response using this JSON schema:
 }
 
 If the user provided contact details (email or phone), set lead quality to "good"; otherwise, "spam".
-If the conversation shows genuine interest but no contact details, set to "ok".
 `;
 
     // Call OpenAI API for analysis
@@ -318,6 +317,13 @@ If the conversation shows genuine interest but no contact details, set to "ok".
       return res.status(500).json({ error: 'Failed to parse analysis response' });
     }
     
+    // Enforce lead quality rule server-side
+    try {
+      const hasContactDetails = (analysis.customerEmail && analysis.customerEmail.trim().length > 0) ||
+                                (analysis.customerPhone && analysis.customerPhone.trim().length > 0);
+      analysis.leadQuality = hasContactDetails ? 'good' : 'spam';
+    } catch (_) {}
+
     // Validate required fields
     if (!analysis.customerName || !analysis.leadQuality) {
       return res.status(500).json({ error: 'Invalid analysis response format' });

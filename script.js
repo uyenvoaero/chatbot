@@ -5,7 +5,7 @@ class Chatbot {
         this.chatMessages = document.getElementById('chatMessages');
         this.typingIndicator = document.getElementById('typingIndicator');
         this.sessionId = null;
-        this.apiBaseUrl = 'http://localhost:3000/api';
+        this.apiBaseUrl = '/api';
         
         this.init();
     }

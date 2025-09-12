@@ -1,14 +1,18 @@
 class ConversationDashboard {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:3000/api';
+        this.apiBaseUrl = '/api';
         this.conversationsList = document.getElementById('conversationsList');
         this.conversationDetail = document.getElementById('conversationDetail');
+        this.analysisSection = document.getElementById('analysisSection');
         this.conversationCount = document.getElementById('conversationCount');
+        this.analysisCount = document.getElementById('analysisCount');
         this.emptyState = document.getElementById('emptyState');
         this.messagesContainer = document.getElementById('messagesContainer');
         this.conversationTitle = document.getElementById('conversationTitle');
         this.conversationDate = document.getElementById('conversationDate');
         this.messageCount = document.getElementById('messageCount');
+        this.analysisTableBody = document.getElementById('analysisTableBody');
+        this.searchInput = document.getElementById('searchInput');
         
         this.currentConversation = null;
         this.conversations = [];
@@ -26,6 +30,15 @@ class ConversationDashboard {
         document.getElementById('refreshBtn').addEventListener('click', () => {
             this.loadConversations();
         });
+        // Tabs
+        const tabConversations = document.getElementById('tabConversations');
+        const tabAnalysis = document.getElementById('tabAnalysis');
+        tabConversations.addEventListener('click', () => this.showTab('conversations'));
+        tabAnalysis.addEventListener('click', () => this.showTab('analysis'));
+        // Toolbar actions
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        if (clearAllBtn) clearAllBtn.addEventListener('click', () => this.clearAllConversations());
+        if (this.searchInput) this.searchInput.addEventListener('input', () => this.renderConversations());
         
         // Back to list button
         document.getElementById('backToList').addEventListener('click', () => {
@@ -47,15 +60,61 @@ class ConversationDashboard {
             this.conversations = data.conversations;
             this.renderConversations();
             this.updateConversationCount();
+            this.renderAnalysisTable();
             
         } catch (error) {
             console.error('Error loading conversations:', error);
             this.showError('Failed to load conversations. Please try again.');
         }
     }
+
+    showTab(tab) {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        if (tab === 'conversations') {
+            document.getElementById('tabConversations').classList.add('active');
+            this.analysisSection.style.display = 'none';
+            this.conversationsList.parentElement.style.display = 'flex';
+            this.conversationDetail.style.display = 'none';
+        } else {
+            document.getElementById('tabAnalysis').classList.add('active');
+            this.conversationsList.parentElement.style.display = 'none';
+            this.conversationDetail.style.display = 'none';
+            this.analysisSection.style.display = 'block';
+        }
+    }
+
+    renderAnalysisTable() {
+        if (!this.analysisTableBody) return;
+        const analyzed = this.conversations.filter(c => c.leadAnalysis && c.leadAnalysis.leadQuality);
+        this.analysisCount.textContent = `${analyzed.length} analyzed`;
+        this.analysisTableBody.innerHTML = '';
+        analyzed.forEach(c => {
+            const tr = document.createElement('tr');
+            const la = c.leadAnalysis || {};
+            tr.innerHTML = `
+                <td>${c.id.substring(0,8)}...</td>
+                <td>${this.formatDate(new Date(c.createdAt))}</td>
+                <td><span class="lead-quality-badge ${la.leadQuality}">${la.leadQuality}</span></td>
+                <td>${la.customerName || ''}</td>
+                <td>${la.customerEmail || ''}</td>
+                <td>${la.customerPhone || ''}</td>
+                <td>${la.customerIndustry || ''}</td>
+                <td>${la.customerConsultation ? 'Yes' : 'No'}</td>
+                <td>${la.analysisDate ? this.formatDate(new Date(la.analysisDate)) : ''}</td>
+            `;
+            this.analysisTableBody.appendChild(tr);
+        });
+    }
     
     renderConversations() {
-        if (this.conversations.length === 0) {
+        const term = (this.searchInput?.value || '').toLowerCase();
+        const list = term ? this.conversations.filter(c =>
+            (c.firstMessage || '').toLowerCase().includes(term) ||
+            (c.lastMessage || '').toLowerCase().includes(term) ||
+            (c.id || '').toLowerCase().includes(term)
+        ) : this.conversations;
+        if (list.length === 0) {
             this.showEmptyState();
             return;
         }
@@ -63,10 +122,27 @@ class ConversationDashboard {
         this.hideEmptyState();
         this.conversationsList.innerHTML = '';
         
-        this.conversations.forEach(conversation => {
+        list.forEach(conversation => {
             const conversationElement = this.createConversationElement(conversation);
             this.conversationsList.appendChild(conversationElement);
         });
+    }
+
+    async clearAllConversations() {
+        if (!confirm('Clear all conversations? This cannot be undone.')) return;
+        try {
+            // client-side: iterate and delete
+            const ids = this.conversations.map(c => c.id);
+            for (const id of ids) {
+                await fetch(`${this.apiBaseUrl}/conversation/${id}`, { method: 'DELETE' });
+            }
+            this.conversations = [];
+            this.renderConversations();
+            this.updateConversationCount();
+            this.showSuccessMessage('All conversations cleared');
+        } catch (e) {
+            this.showErrorMessage('Failed to clear all conversations');
+        }
     }
     
     createConversationElement(conversation) {
@@ -377,45 +453,11 @@ class ConversationDashboard {
     }
     
     showSuccessMessage(message) {
-        // Create a temporary success message
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.innerHTML = `
-            <i class="fas fa-check-circle"></i>
-            <span>${message}</span>
-        `;
-        
-        // Add to the top of the dashboard
-        const dashboardMain = document.querySelector('.dashboard-main');
-        dashboardMain.insertBefore(successDiv, dashboardMain.firstChild);
-        
-        // Remove after 3 seconds
-        setTimeout(() => {
-            if (successDiv.parentNode) {
-                successDiv.parentNode.removeChild(successDiv);
-            }
-        }, 3000);
+        this.showToast(message, 'success');
     }
     
     showErrorMessage(message) {
-        // Create a temporary error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = `
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>${message}</span>
-        `;
-        
-        // Add to the top of the dashboard
-        const dashboardMain = document.querySelector('.dashboard-main');
-        dashboardMain.insertBefore(errorDiv, dashboardMain.firstChild);
-        
-        // Remove after 5 seconds
-        setTimeout(() => {
-            if (errorDiv.parentNode) {
-                errorDiv.parentNode.removeChild(errorDiv);
-            }
-        }, 5000);
+        this.showToast(message, 'error');
     }
     
     showEmptyState() {
@@ -459,6 +501,34 @@ class ConversationDashboard {
         const minutes = now.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     }
+
+	getToastContainer() {
+		let container = document.getElementById('toastContainer');
+		if (!container) {
+			container = document.createElement('div');
+			container.id = 'toastContainer';
+			container.className = 'toast-container';
+			document.body.appendChild(container);
+		}
+		return container;
+	}
+
+	showToast(message, type = 'success') {
+		const container = this.getToastContainer();
+		const toast = document.createElement('div');
+		toast.className = `toast ${type === 'success' ? 'toast-success' : 'toast-error'}`;
+		toast.innerHTML = `
+			<i class="${type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle'}"></i>
+			<span>${message}</span>
+		`;
+		container.appendChild(toast);
+		setTimeout(() => {
+			toast.classList.add('hide');
+			setTimeout(() => {
+				if (toast.parentNode) toast.parentNode.removeChild(toast);
+			}, 300);
+		}, type === 'success' ? 2500 : 4000);
+	}
 }
 
 // Initialize dashboard when DOM is loaded
