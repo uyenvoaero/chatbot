@@ -12,8 +12,7 @@
     { "src": "/api/chat", "dest": "/api/chat.js" },
     { "src": "/api/conversations", "dest": "/api/conversations.js" },
     { "src": "/api/conversation/(?<sessionId>[^/]+)/analyze", "dest": "/api/conversation/[sessionId]/analyze.js" },
-    { "src": "/api/conversation/(?<sessionId>[^/]+)$", "dest": "/api/conversation/[sessionId]/index.js" },
-    { "src": "/api/conversation/(?<sessionId>[^/]+)$", "methods": ["DELETE"], "dest": "/api/conversation/[sessionId]/index.delete.js" }
+    { "src": "/api/conversation/(?<sessionId>[^/]+)$", "dest": "/api/conversation/[sessionId]/index.js" }
   ]
 }
 
