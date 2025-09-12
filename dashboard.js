@@ -393,17 +393,35 @@ class ConversationDashboard {
         }
         
         try {
+            console.log('=== FRONTEND DELETE DEBUG ===');
             console.log('Attempting to delete conversation:', conversation.id);
             console.log('Full conversation object:', conversation);
             console.log('API URL:', `${this.apiBaseUrl}/conversation/${conversation.id}`);
+            console.log('API Base URL:', this.apiBaseUrl);
             
-            const response = await fetch(`${this.apiBaseUrl}/conversation/${conversation.id}`, {
-                method: 'DELETE'
+            const deleteUrl = `${this.apiBaseUrl}/conversation/${conversation.id}`;
+            console.log('Final delete URL:', deleteUrl);
+            
+            const response = await fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
             
             console.log('Delete response status:', response.status);
-            const responseData = await response.json();
-            console.log('Delete response data:', responseData);
+            console.log('Delete response headers:', response.headers);
+            
+            let responseData;
+            try {
+                responseData = await response.json();
+                console.log('Delete response data:', responseData);
+            } catch (jsonError) {
+                console.error('Failed to parse response JSON:', jsonError);
+                const responseText = await response.text();
+                console.log('Raw response text:', responseText);
+                throw new Error(`Invalid response format: ${responseText}`);
+            }
             
             if (!response.ok) {
                 throw new Error(responseData.error || 'Failed to delete conversation');
