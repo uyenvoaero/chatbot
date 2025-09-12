@@ -17,14 +17,30 @@ module.exports = async (req, res) => {
         }
     } else if (req.method === 'DELETE') {
         try {
-            const { error } = await supabase
+            console.log('Deleting conversation:', sessionId);
+            const { data, error } = await supabase
                 .from('conversations')
                 .delete()
-                .eq('conversation_id', sessionId);
-            if (error) throw error;
-            res.status(200).json({ message: 'Conversation cleared' });
+                .eq('conversation_id', sessionId)
+                .select();
+            
+            console.log('Delete result:', { data, error });
+            
+            if (error) {
+                console.error('Supabase delete error:', error);
+                throw error;
+            }
+            
+            res.status(200).json({ 
+                message: 'Conversation cleared',
+                deleted: data 
+            });
         } catch (e) {
-            res.status(500).json({ error: 'Failed to delete conversation' });
+            console.error('Delete conversation error:', e);
+            res.status(500).json({ 
+                error: 'Failed to delete conversation',
+                details: e.message 
+            });
         }
     } else {
         res.status(405).json({ error: 'Method not allowed' });

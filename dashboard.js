@@ -393,13 +393,17 @@ class ConversationDashboard {
         }
         
         try {
+            console.log('Attempting to delete conversation:', conversation.id);
             const response = await fetch(`${this.apiBaseUrl}/conversation/${conversation.id}`, {
                 method: 'DELETE'
             });
             
+            console.log('Delete response status:', response.status);
+            const responseData = await response.json();
+            console.log('Delete response data:', responseData);
+            
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Failed to delete conversation');
+                throw new Error(responseData.error || 'Failed to delete conversation');
             }
             
             // Remove from local array
@@ -408,6 +412,7 @@ class ConversationDashboard {
             // Update UI
             this.renderConversations();
             this.updateConversationCount();
+            this.renderAnalysisTable();
             
             // If this was the currently selected conversation, hide detail view
             if (this.currentConversation && this.currentConversation.id === conversation.id) {
