@@ -48,16 +48,33 @@ class ConversationDashboard {
     
     async loadConversations() {
         try {
+            console.log('=== LOADING CONVERSATIONS ===');
+            console.log('API Base URL:', this.apiBaseUrl);
+            console.log('Full URL:', `${this.apiBaseUrl}/conversations`);
+            
             this.showLoading();
             
             const response = await fetch(`${this.apiBaseUrl}/conversations`);
-            const data = await response.json();
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            let data;
+            try {
+                data = await response.json();
+                console.log('Response data:', data);
+            } catch (jsonError) {
+                console.error('Failed to parse response JSON:', jsonError);
+                const responseText = await response.text();
+                console.log('Raw response text:', responseText);
+                throw new Error(`Invalid response format: ${responseText}`);
+            }
             
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to load conversations');
             }
             
             this.conversations = data.conversations;
+            console.log('Loaded conversations:', this.conversations.length);
             this.renderConversations();
             this.updateConversationCount();
             this.renderAnalysisTable();
