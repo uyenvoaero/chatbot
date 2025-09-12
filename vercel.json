@@ -17,6 +17,7 @@
     { "src": "/api/test-simple", "dest": "/api/test-simple.js" },
     { "src": "/api/test-env", "dest": "/api/test-env.js" },
     { "src": "/api/health", "dest": "/api/health.js" },
+    { "src": "/api/test-delete-direct", "dest": "/api/test-delete-direct.js" },
     { "src": "/api/conversation/(?<sessionId>[^/]+)/analyze", "dest": "/api/conversation/[sessionId]/analyze.js" },
     { "src": "/api/conversation/(?<sessionId>[^/]+)$", "dest": "/api/conversation/[sessionId]/index.simple.js" }
   ]

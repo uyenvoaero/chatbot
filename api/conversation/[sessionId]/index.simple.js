@@ -1,9 +1,15 @@
 const { supabase } = require('../../../lib/clients');
 
 module.exports = async (req, res) => {
+    console.log('=== SIMPLE ENDPOINT DEBUG ===');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Query:', req.query);
+    console.log('Headers:', req.headers);
+    
     const { sessionId } = req.query;
     
-    console.log('Simple endpoint - Method:', req.method, 'SessionId:', sessionId);
+    console.log('Extracted SessionId:', sessionId);
     
     if (req.method === 'GET') {
         try {
