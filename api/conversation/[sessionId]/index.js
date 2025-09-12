@@ -17,7 +17,36 @@ module.exports = async (req, res) => {
         }
     } else if (req.method === 'DELETE') {
         try {
-            console.log('Deleting conversation:', sessionId);
+            console.log('=== DELETE REQUEST DEBUG ===');
+            console.log('SessionId:', sessionId);
+            console.log('Request method:', req.method);
+            console.log('Request headers:', req.headers);
+            
+            // First, check if conversation exists
+            console.log('Checking if conversation exists...');
+            const { data: existingData, error: checkError } = await supabase
+                .from('conversations')
+                .select('conversation_id, created_at')
+                .eq('conversation_id', sessionId);
+            
+            console.log('Check result:', { existingData, checkError });
+            
+            if (checkError) {
+                console.error('Error checking conversation:', checkError);
+                throw checkError;
+            }
+            
+            if (!existingData || existingData.length === 0) {
+                console.log('Conversation not found');
+                return res.status(404).json({ 
+                    error: 'Conversation not found',
+                    sessionId: sessionId
+                });
+            }
+            
+            console.log('Conversation found, proceeding with delete...');
+            
+            // Now delete the conversation
             const { data, error } = await supabase
                 .from('conversations')
                 .delete()
@@ -25,21 +54,37 @@ module.exports = async (req, res) => {
                 .select();
             
             console.log('Delete result:', { data, error });
+            console.log('Deleted count:', data ? data.length : 0);
             
             if (error) {
                 console.error('Supabase delete error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                console.error('Error details:', error.details);
                 throw error;
             }
             
+            // Verify deletion
+            const { data: verifyData, error: verifyError } = await supabase
+                .from('conversations')
+                .select('conversation_id')
+                .eq('conversation_id', sessionId);
+            
+            console.log('Verification result:', { verifyData, verifyError });
+            console.log('Still exists after delete:', verifyData && verifyData.length > 0);
+            
             res.status(200).json({ 
                 message: 'Conversation cleared',
-                deleted: data 
+                deleted: data,
+                deletedCount: data ? data.length : 0,
+                stillExists: verifyData && verifyData.length > 0
             });
         } catch (e) {
             console.error('Delete conversation error:', e);
             res.status(500).json({ 
                 error: 'Failed to delete conversation',
-                details: e.message 
+                details: e.message,
+                code: e.code
             });
         }
     } else {

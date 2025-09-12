@@ -394,6 +394,9 @@ class ConversationDashboard {
         
         try {
             console.log('Attempting to delete conversation:', conversation.id);
+            console.log('Full conversation object:', conversation);
+            console.log('API URL:', `${this.apiBaseUrl}/conversation/${conversation.id}`);
+            
             const response = await fetch(`${this.apiBaseUrl}/conversation/${conversation.id}`, {
                 method: 'DELETE'
             });

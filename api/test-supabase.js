@@ -31,6 +31,14 @@ module.exports = async (req, res) => {
             
         console.log('Delete test result:', testDelete);
         
+        // Test if we can see all conversations
+        const allConversations = await supabase
+            .from('conversations')
+            .select('conversation_id, created_at')
+            .limit(5);
+            
+        console.log('All conversations sample:', allConversations);
+        
         res.status(200).json({
             success: true,
             message: 'Supabase connection working',
@@ -38,6 +46,11 @@ module.exports = async (req, res) => {
             deleteTest: {
                 error: testDelete.error,
                 code: testDelete.error?.code
+            },
+            allConversations: {
+                data: allConversations.data,
+                error: allConversations.error,
+                count: allConversations.data?.length || 0
             }
         });
         
