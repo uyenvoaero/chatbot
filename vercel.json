@@ -11,6 +11,7 @@
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/api/chat", "dest": "/api/chat.js" },
     { "src": "/api/conversations", "dest": "/api/conversations.js" },
+    { "src": "/api/test-supabase", "dest": "/api/test-supabase.js" },
     { "src": "/api/conversation/(?<sessionId>[^/]+)/analyze", "dest": "/api/conversation/[sessionId]/analyze.js" },
     { "src": "/api/conversation/(?<sessionId>[^/]+)$", "dest": "/api/conversation/[sessionId]/index.js" }
   ]
